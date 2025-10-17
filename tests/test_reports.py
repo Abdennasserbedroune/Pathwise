@@ -118,3 +118,23 @@ def test_missing_batch_returns_not_found() -> None:
         headers=_auth_header("token-recruiter-leia"),
     )
     assert response.status_code == 404
+
+
+def test_resume_pdf_preview_sets_inline_content_disposition() -> None:
+    response = client.get(
+        "/api/reports/resume/analysis-ava/export/pdf",
+        headers=_auth_header("token-ava"),
+        params={"preview": "true"},
+    )
+    assert response.status_code == 200
+    assert response.headers["content-disposition"].startswith("inline; filename=")
+
+
+def test_batch_csv_preview_sets_inline_content_disposition() -> None:
+    response = client.get(
+        "/api/reports/recruiter/batch/batch-recruiter-planetaria/export/csv",
+        headers=_auth_header("token-recruiter-leia"),
+        params={"preview": "1"},
+    )
+    assert response.status_code == 200
+    assert response.headers["content-disposition"].startswith("inline; filename=")
