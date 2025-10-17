@@ -41,6 +41,10 @@ Static bearer tokens are used to simplify the example authentication flow:
 | Recruiter | `GET /api/reports/recruiter/batch/{batch_id}/export/pdf` | Produces a PDF batch comparison for multiple resumes |
 | Recruiter | `GET /api/reports/recruiter/batch/{batch_id}/export/csv` | Returns a CSV export listing each candidate in the batch |
 
+Append `?preview=true` to any export URL to render the response inline (for example, in a new
+browser tab) instead of forcing a download. This is useful when you want to quickly review a PDF or
+CSV before saving it locally.
+
 ### Sample identifiers
 
 | Type | Identifier | Notes |

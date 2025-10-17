@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import io
 
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import FastAPI, HTTPException, Query, Request, status
 from fastapi.responses import StreamingResponse
 
 from backend import data
@@ -38,69 +38,105 @@ def _get_batch_or_404(batch_id: str) -> BatchComparison:
     return batch
 
 
+def _build_streaming_response(
+    payload: bytes,
+    media_type: str,
+    filename: str,
+    preview: bool,
+) -> StreamingResponse:
+    disposition_type = "inline" if preview else "attachment"
+    return StreamingResponse(
+        io.BytesIO(payload),
+        media_type=media_type,
+        headers={
+            "Content-Disposition": f"{disposition_type}; filename={filename}",
+        },
+    )
+
+
 @app.get("/api/reports/resume/{analysis_id}/export/pdf")
-def export_resume_pdf(analysis_id: str, request: Request) -> StreamingResponse:
+def export_resume_pdf(
+    analysis_id: str,
+    request: Request,
+    preview: bool = Query(
+        False, description="Set to true to open the PDF inline instead of downloading."
+    ),
+) -> StreamingResponse:
     identity = get_identity(request)
     analysis = _get_resume_analysis_or_404(analysis_id)
     ensure_can_access_resume(identity, analysis)
 
     pdf_bytes = generate_resume_pdf(analysis)
     filename = f"{analysis.candidate_name.replace(' ', '_').lower()}-{analysis.id}.pdf"
-    return StreamingResponse(
-        io.BytesIO(pdf_bytes),
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": f"attachment; filename={filename}",
-        },
+    return _build_streaming_response(
+        pdf_bytes,
+        "application/pdf",
+        filename,
+        preview,
     )
 
 
 @app.get("/api/reports/resume/{analysis_id}/export/csv")
-def export_resume_csv(analysis_id: str, request: Request) -> StreamingResponse:
+def export_resume_csv(
+    analysis_id: str,
+    request: Request,
+    preview: bool = Query(
+        False, description="Set to true to open the CSV inline instead of downloading."
+    ),
+) -> StreamingResponse:
     identity = get_identity(request)
     analysis = _get_resume_analysis_or_404(analysis_id)
     ensure_can_access_resume(identity, analysis)
 
     csv_bytes = generate_resume_csv(analysis)
     filename = f"{analysis.candidate_name.replace(' ', '_').lower()}-{analysis.id}.csv"
-    return StreamingResponse(
-        io.BytesIO(csv_bytes),
-        media_type="text/csv",
-        headers={
-            "Content-Disposition": f"attachment; filename={filename}",
-        },
+    return _build_streaming_response(
+        csv_bytes,
+        "text/csv",
+        filename,
+        preview,
     )
 
 
 @app.get("/api/reports/recruiter/batch/{batch_id}/export/pdf")
-def export_batch_pdf(batch_id: str, request: Request) -> StreamingResponse:
+def export_batch_pdf(
+    batch_id: str,
+    request: Request,
+    preview: bool = Query(
+        False, description="Set to true to open the PDF inline instead of downloading."
+    ),
+) -> StreamingResponse:
     identity = get_identity(request)
     batch = _get_batch_or_404(batch_id)
     ensure_can_access_batch(identity, batch)
 
     pdf_bytes = generate_batch_pdf(batch)
     filename = f"{batch.job_title.replace(' ', '_').lower()}-{batch.id}.pdf"
-    return StreamingResponse(
-        io.BytesIO(pdf_bytes),
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": f"attachment; filename={filename}",
-        },
+    return _build_streaming_response(
+        pdf_bytes,
+        "application/pdf",
+        filename,
+        preview,
     )
 
 
 @app.get("/api/reports/recruiter/batch/{batch_id}/export/csv")
-def export_batch_csv(batch_id: str, request: Request) -> StreamingResponse:
+def export_batch_csv(
+    batch_id: str,
+    request: Request,
+    preview: bool = Query(
+        False, description="Set to true to open the CSV inline instead of downloading."
+    ),
+) -> StreamingResponse:
     identity = get_identity(request)
     batch = _get_batch_or_404(batch_id)
     ensure_can_access_batch(identity, batch)
 
     csv_bytes = generate_batch_csv(batch)
     filename = f"{batch.job_title.replace(' ', '_').lower()}-{batch.id}.csv"
-    return StreamingResponse(
-        io.BytesIO(csv_bytes),
-        media_type="text/csv",
-        headers={
-            "Content-Disposition": f"attachment; filename={filename}",
-        },
+    return _build_streaming_response(
+        csv_bytes,
+        "text/csv",
+        filename,
+        preview,
     )
