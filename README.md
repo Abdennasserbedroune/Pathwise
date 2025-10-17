@@ -1,84 +1,123 @@
 # Pathwise
 
-Pathwise is a career-focused web app offering AI-powered resume analysis and scoring. It helps job seekers improve their resumes with clear, personalized feedback, while enabling recruiters to upload and compare multiple CVs efficiently. Pathwise simplifies career decisions by providing actionable insights that guide users on their unique paths.
+Pathwise is a full-stack starter kit for building an AI-assisted résumé intelligence platform. The
+stack combines a Next.js 14 frontend, a FastAPI backend powered by Poetry, and background
+workloads handled by Celery workers. Docker Compose keeps local development ergonomic by wiring up
+Postgres and Redis alongside the application services.
 
-## Backend report exports
+## Tech stack
 
-The FastAPI application under [`backend/`](backend/) now exposes export utilities for both job seekers requesting an individual resume review and recruiters downloading batch comparison summaries.
-
-### Installation
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .[dev]
+```
+frontend/  →  Next.js 14 · TypeScript · TailwindCSS · ESLint · Prettier
+backend/   →  FastAPI · SQLAlchemy · Celery · spaCy · transformers · Ruff · Black
+ops/       →  Docker Compose · Postgres 15 · Redis 7
 ```
 
-### Running the server
+## Getting started
+
+### Prerequisites
+
+- **Node.js 20** and **npm 10** (or run everything with Docker Compose)
+- **Python 3.11** with [Poetry](https://python-poetry.org/) 1.8+
+- Docker Desktop or Docker Engine if you plan to use the containerised workflow
+
+### Environment variables
+
+Shared templates are provided—duplicate them before booting any services:
 
 ```bash
-uvicorn backend.app:app --reload
+cp .env.example .env
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
 ```
 
-### Authentication tokens
+Feel free to adjust ports, database credentials, or API hosts for your environment. The backend and
+Celery services read from `backend/.env`, while the frontend picks up values from `frontend/.env`.
 
-Static bearer tokens are used to simplify the example authentication flow:
+### Local development with Docker Compose
 
-| Persona | Token header value |
-| --- | --- |
-| Ava Adams (job seeker) | `Bearer token-ava` |
-| Brandon Blake (job seeker) | `Bearer token-brandon` |
-| Camila Chen (job seeker) | `Bearer token-camila` |
-| Leia Ortiz (recruiter) | `Bearer token-recruiter-leia` |
-| Mason Harper (recruiter) | `Bearer token-recruiter-mason` |
+The quickest way to spin up the entire stack is with Docker Compose. This brings up Postgres, Redis,
+the FastAPI app, Celery worker/beat, and the Next.js dev server.
 
-### Export endpoints
+```bash
+docker compose up --build
+```
 
-| Audience | Endpoint | Description |
-| --- | --- | --- |
-| Job seeker | `GET /api/reports/resume/{analysis_id}/export/pdf` | Generates a rich PDF summarising score, strengths, improvements and AI feedback |
-| Job seeker | `GET /api/reports/resume/{analysis_id}/export/csv` | Provides a CSV row representing the resume assessment |
-| Recruiter | `GET /api/reports/recruiter/batch/{batch_id}/export/pdf` | Produces a PDF batch comparison for multiple resumes |
-| Recruiter | `GET /api/reports/recruiter/batch/{batch_id}/export/csv` | Returns a CSV export listing each candidate in the batch |
+- API: http://localhost:8000 (FastAPI docs available at `/docs`)
+- Frontend: http://localhost:3000
+- Postgres: localhost:5432 (credentials in `.env`)
+- Redis: localhost:6379
 
-Append `?preview=true` to any export URL to render the response inline (for example, in a new
-browser tab) instead of forcing a download. This is useful when you want to quickly review a PDF or
-CSV before saving it locally.
+Stop the stack with `docker compose down`. Add `-v` to prune the Postgres volume if you need a clean
+slate.
 
-### Sample identifiers
+### Working on the backend without Docker
 
-| Type | Identifier | Notes |
-| --- | --- | --- |
-| Resume analysis | `analysis-ava` | Ava Adams' individual resume feedback |
-| Resume analysis | `analysis-brandon` | Brandon Blake's individual resume feedback |
-| Recruiter batch | `batch-recruiter-planetaria` | Product management comparison for recruiter Leia |
-| Recruiter batch | `batch-recruiter-orbital` | Data science comparison for recruiter Mason |
+```bash
+cd backend
+poetry install
+poetry run uvicorn app.main:app --reload
+```
 
-Each endpoint enforces access control: job seekers can only download their own resume reports, while recruiter exports require a matching recruiter token.
+This installs dependencies (FastAPI, SQLAlchemy, spaCy, Celery, pdfplumber, python-docx, transformers,
+and more) and launches the API with auto-reload on code changes.
 
-## Front-end download actions
+Run the Celery worker locally in a separate terminal once Redis is available:
 
-A reusable React component lives in [`frontend/src/components/ReportExportButtons.tsx`](frontend/src/components/ReportExportButtons.tsx). It renders export buttons for resume and batch reports, handles loading states, and downloads file responses while respecting the browser’s security model.
+```bash
+poetry run celery -A app.core.celery_app.celery_app worker --loglevel=info
+```
 
-### Component testing
+Formatting and linting helpers:
+
+- `poetry run ruff check .`
+- `poetry run black .`
+
+### Working on the frontend without Docker
 
 ```bash
 cd frontend
 npm install
-npm test
+npm run dev
 ```
 
-Vitest and Testing Library validate the loading UX, error handling, and expected network requests for the client-side download helpers.
+Useful scripts:
 
-## Export formats
+- `npm run lint` – ESLint (Next.js core web vitals rules)
+- `npm run format` – Prettier check
+- `npm run format:fix` – Prettier write
 
-- **PDF** exports are rendered with ReportLab and include headline metadata, summaries, strengths, and AI feedback highlights.
-- **CSV** exports summarise candidates in a machine-readable format for downstream tooling or analysis.
+The TailwindCSS config scans the `app/` and `components/` directories, so new UI files inherit the
+shared design tokens automatically.
 
-End-to-end tests covering authentication, content, and formatting expectations can be found in [`tests/test_reports.py`](tests/test_reports.py).
+## Project structure
 
-### Backend test suite
-
-```bash
-pytest
 ```
+.
+├── backend/
+│   ├── app/
+│   │   ├── api/               # FastAPI routers (health check included)
+│   │   ├── core/              # Settings, Celery wiring
+│   │   ├── db/                # SQLAlchemy session helpers
+│   │   └── tasks/             # Celery task modules
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── pyproject.toml         # Poetry configuration (Black + Ruff)
+│   └── .env.example
+├── frontend/
+│   ├── app/                   # Next.js App Router entrypoints & layout
+│   ├── components/
+│   ├── Dockerfile
+│   ├── package.json           # ESLint + Prettier scripts
+│   └── .env.example
+├── docker-compose.yml         # Postgres, Redis, API, Celery, and Next.js services
+├── .env.example               # Shared environment template for containers
+└── README.md
+```
+
+## Next steps
+
+- Model résumé ingestion pipelines with spaCy, transformers, pdfplumber, and python-docx.
+- Wire SQLAlchemy models to persist analysis history in Postgres.
+- Extend the frontend with authenticated dashboards that consume the FastAPI endpoints.
+- Configure CI to run formatters (`ruff`, `black`, `eslint`, `prettier`) and test suites automatically.
