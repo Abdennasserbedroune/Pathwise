@@ -19,8 +19,9 @@ class Settings(BaseSettings):
     environment: str = Field(default="local", alias="ENVIRONMENT")
     api_v1_prefix: str = Field(default="/api/v1", alias="API_V1_PREFIX")
 
+    # Database and infrastructure
     database_url: str = Field(
-        default="postgresql+psycopg://pathwise:password@db:5432/pathwise",
+        default="postgresql+psycopg://pathwise:pathwise@db:5432/pathwise",
         alias="DATABASE_URL",
     )
     redis_url: str = Field(default="redis://redis:6379/0", alias="REDIS_URL")
@@ -30,7 +31,12 @@ class Settings(BaseSettings):
     celery_result_backend: str = Field(
         default="redis://redis:6379/2", alias="CELERY_RESULT_BACKEND"
     )
+
+    # ML configuration
     spacy_model: str = Field(default="en_core_web_sm", alias="SPACY_MODEL")
+
+    # Frontend origin used for CORS
+    frontend_url: str = Field(default="http://localhost:3000", alias="FRONTEND_URL")
 
 
 @lru_cache
