@@ -2,8 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+/* <CHANGE> theme tokens for light and dark modes, plus small motion utilities */
 :root {
+  color-scheme: light;
+  /* neutrals */
+  --background: #ffffff;
+  --foreground: #0f172a; /* slate-900 */
+  --muted: #475569; /* slate-600 */
+  --muted-2: #64748b; /* slate-500 */
+  --border: #e5e7eb; /* zinc-200 */
+  /* brand */
+  --brand: #06b6d4; /* cyan-500 */
+  --brand-contrast: #06242a; /* dark text on brand in light mode */
+}
+
+.dark {
   color-scheme: dark;
+  --background: #0b1220; /* near slate-950 */
+  --foreground: #e2e8f0; /* slate-200 */
+  --muted: #94a3b8; /* slate-400 */
+  --muted-2: #a3b0c1; /* slightly lighter */
+  --border: #1f2937; /* slate-800/900 */
+  --brand: #06b6d4; /* keep brand consistent */
+  --brand-contrast: #051317; /* near-black for contrast where needed */
+}
+
+html, body {
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 a {
@@ -13,4 +39,15 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+/* motion: subtle fade-up used on hero and cards; respects reduced motion */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-in-up { animation: fade-in-up 500ms ease-out both; }
+  .animate-in-up-slow { animation: fade-in-up 700ms ease-out 100ms both; }
 }
