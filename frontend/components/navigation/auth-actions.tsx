@@ -13,7 +13,7 @@ export function AuthActions({ session }: AuthActionsProps) {
     return (
       <Link
         href="/auth/sign-in"
-        className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-cyan-400 hover:text-cyan-200"
+        className="rounded-md border px-4 py-2 text-sm font-semibold transition border-[var(--border)] text-[var(--foreground)] hover:text-[var(--brand)] hover:border-[var(--brand)]"
       >
         Sign in
       </Link>
@@ -27,14 +27,15 @@ export function AuthActions({ session }: AuthActionsProps) {
     <div className="flex items-center gap-3">
       <Link
         href={dashboardPath}
-        className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-cyan-400 hover:text-cyan-200"
+        className="rounded-md border px-4 py-2 text-sm font-semibold transition border-[var(--border)] text-[var(--foreground)] hover:text-[var(--brand)] hover:border-[var(--brand)]"
       >
         Dashboard
       </Link>
       <button
         type="button"
         onClick={() => signOut({ callbackUrl: "/" })}
-        className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-cyan-400"
+        className="rounded-md px-4 py-2 text-sm font-semibold transition"
+        style={{ backgroundColor: 'var(--brand)', color: 'var(--brand-contrast)' }}
       >
         Sign out
       </button>

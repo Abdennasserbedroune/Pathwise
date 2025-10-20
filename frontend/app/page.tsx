@@ -27,38 +27,38 @@ const stack = [
 export default function HomePage() {
   return (
     <div className="container mx-auto flex max-w-5xl flex-col gap-24 px-6 py-16">
-      <section className="space-y-6 text-center">
-        <span className="inline-flex max-w-max items-center gap-2 rounded-full border border-cyan-500/60 bg-cyan-500/10 px-4 py-1 text-xs uppercase tracking-wider text-cyan-200">
-          AI résumé copilots for teams
+      <section className="space-y-6 text-center animate-in-up">
+        <span className="inline-flex max-w-max items-center gap-2 px-3 py-1 text-xs font-medium tracking-wide text-[var(--brand)]">
+          <span className="inline-block h-2 w-2 rounded-full bg-[var(--brand)]" aria-hidden="true" /> AI résumé copilots
         </span>
         <h1 className="text-balance text-4xl font-semibold sm:text-5xl">
           Build a collaborative résumé intelligence workflow for job seekers and recruiters.
         </h1>
-        <p className="mx-auto max-w-2xl text-lg text-slate-300">
-          Pathwise combines AI critique, actionable recommendations, and recruiter-ready exports so
-          your team can iterate on career stories with confidence.
+        <p className="mx-auto max-w-2xl text-lg text-[var(--muted)]">
+          Pathwise combines AI critique, actionable recommendations, and recruiter-ready exports so your team can iterate on career stories with confidence.
         </p>
-        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <a
             href="https://www.pathwise.ai"
-            className="rounded-md bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-sm transition hover:bg-cyan-400"
+            className="rounded-md px-6 py-3 text-sm font-semibold shadow-sm transition"
+            style={{ backgroundColor: 'var(--brand)', color: 'var(--brand-contrast)' }}
           >
             Request early access
           </a>
           <a
             href="#workflow"
-            className="rounded-md border border-slate-700 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:border-cyan-400 hover:text-cyan-200"
+            className="rounded-md border px-6 py-3 text-sm font-semibold transition border-[var(--border)] text-[var(--foreground)] hover:text-[var(--brand)] hover:border-[var(--brand)]"
           >
             Explore the workflow
           </a>
         </div>
       </section>
 
-      <section id="features" className="grid gap-8 md:grid-cols-3">
+      <section id="features" className="grid gap-6 md:grid-cols-3 animate-in-up-slow">
         {highlights.map(({ title, description }) => (
-          <article key={title} className="rounded-lg border border-slate-800 bg-slate-900/60 p-6">
-            <h2 className="text-xl font-semibold text-cyan-200">{title}</h2>
-            <p className="mt-2 text-sm text-slate-300">{description}</p>
+          <article key={title} className="rounded-lg border p-6 transition border-[var(--border)] bg-transparent hover:shadow-sm hover:-translate-y-0.5">
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">{title}</h2>
+            <p className="mt-2 text-sm text-[var(--muted)]">{description}</p>
           </article>
         ))}
       </section>
@@ -66,18 +66,15 @@ export default function HomePage() {
       <section id="workflow" className="grid gap-12 md:grid-cols-2 md:items-center">
         <div className="space-y-4">
           <h2 className="text-3xl font-semibold">From upload to insight in minutes.</h2>
-          <p className="text-slate-300">
-            Bootstrap the FastAPI backend, Celery workers, and Next.js frontend with Docker Compose.
-            Queue AI-heavy workloads, land results in Postgres, and push tailored feedback to your
-            candidates without context switching.
+          <p className="text-[var(--muted)]">
+            Bootstrap the FastAPI backend, Celery workers, and Next.js frontend with Docker Compose. Queue AI-heavy workloads, land results in Postgres, and push tailored feedback to your candidates without context switching.
           </p>
-          <p className="text-slate-400">
-            The starter kit includes infrastructure ready for local development so you can focus on
-            business logic instead of wiring.
+          <p className="text-[var(--muted-2)]">
+            The starter kit includes infrastructure ready for local development so you can focus on business logic instead of wiring.
           </p>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-6 text-sm text-slate-300 shadow-xl">
-          <ol className="list-decimal space-y-3 pl-6">
+        <div className="rounded-xl border p-6 text-sm shadow-sm border-[var(--border)] bg-transparent">
+          <ol className="list-decimal space-y-3 pl-6 text-[var(--muted)]">
             <li>Drop a résumé or candidate batch request into the queue.</li>
             <li>Celery workers orchestrate spaCy, transformers, and PDF parsing pipelines.</li>
             <li>Store structured insights in Postgres and send events over Redis channels.</li>
@@ -88,11 +85,11 @@ export default function HomePage() {
 
       <section id="stack" className="space-y-4">
         <h2 className="text-3xl font-semibold">Stack highlights</h2>
-        <ul className="flex flex-wrap gap-3 text-sm text-slate-200">
+        <ul className="flex flex-wrap gap-3 text-sm">
           {stack.map((item) => (
             <li
               key={item}
-              className="rounded-full border border-slate-700/80 bg-slate-900/60 px-4 py-2 text-xs uppercase tracking-wide text-cyan-200"
+              className="rounded-full border px-3 py-1.5 text-xs uppercase tracking-wide border-[var(--border)] text-[var(--muted)]"
             >
               {item}
             </li>
