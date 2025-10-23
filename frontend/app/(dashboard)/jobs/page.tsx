@@ -1,89 +1,100 @@
 "use client";
 
-import { useState } from "react";
-import { JobSwiper } from "@/components/swipe/job-swiper";
-import { mockJobs } from "@/lib/fixtures/jobs";
-import { useSwipeStore } from "@/lib/state/swipe-store";
+import { useMemo, useState } from "react";
+import { BookmarkCheck, RotateCcw } from "lucide-react";
+
+import { SwipeStack } from "@/components/job-swiper/swipe-stack";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { mockJobs } from "@/lib/fixtures/mock-jobs";
+import { useSwipeStore, type SwipeDecision } from "@/lib/state/swipe-store";
 
 export default function JobsPage() {
-  const [showStats, setShowStats] = useState(false);
-  const { likedJobs, dislikedJobs, clearAllSwipes } = useSwipeStore();
+  const { savedJobs, skippedJobs, clearAll } = useSwipeStore();
+  const [completed, setCompleted] = useState(false);
+  const [lastDecision, setLastDecision] = useState<{ jobTitle: string; decision: SwipeDecision } | null>(null);
 
-  const handleSwipe = (jobId: string, decision: "like" | "dislike") => {
-  };
+  const stats = useMemo(
+    () => [
+      {
+        label: "Saved",
+        value: savedJobs.length,
+        tone: "text-primary",
+      },
+      {
+        label: "Skipped",
+        value: skippedJobs.length,
+        tone: "text-muted",
+      },
+    ],
+    [savedJobs.length, skippedJobs.length],
+  );
 
-  const handleComplete = () => {
+  const handleClear = () => {
+    clearAll();
+    setCompleted(false);
+    setLastDecision(null);
   };
 
   return (
-    <div className="min-h-[calc(100vh-200px)] bg-[var(--background)] px-4 py-8 md:px-6">
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)] md:text-3xl">
-              Discover Jobs
-            </h1>
-            <p className="text-sm text-[var(--muted)] md:text-base">
-              Swipe right to like, left to pass
-            </p>
-          </div>
-
-          <button
-            onClick={() => setShowStats(!showStats)}
-            className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--background)]"
-          >
-            {showStats ? "Hide" : "Stats"}
-          </button>
-        </div>
-
-        {showStats && (
-          <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-lg">
-            <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">
-              Your Swipe Stats
-            </h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-lg bg-[var(--background)] p-4">
-                <div className="text-3xl font-bold text-[var(--brand)]">{likedJobs.length}</div>
-                <div className="text-sm text-[var(--muted)]">Liked</div>
+    <div className="bg-background">
+      <div className="container mx-auto flex min-h-[calc(100vh-4rem)] flex-col gap-8 px-4 py-10 md:flex-row md:items-start">
+        <div className="w-full md:max-w-sm">
+          <Card className="sticky top-24 flex flex-col gap-6 bg-background/80">
+            <CardHeader className="border-b border-border/60">
+              <h1 className="font-display text-2xl font-semibold text-foreground">Browse opportunities</h1>
+              <p className="text-sm text-foreground/70">
+                Swipe through curated roles. Save the ones that resonate, skip the rest, and we&apos;ll notify recruiters on your behalf.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                {stats.map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-2xl border border-border/60 bg-background/70 p-4 text-sm"
+                  >
+                    <div className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">{item.label}</div>
+                    <div className={`mt-2 text-3xl font-semibold ${item.tone}`}>{item.value}</div>
+                  </div>
+                ))}
               </div>
-              <div className="rounded-lg bg-[var(--background)] p-4">
-                <div className="text-3xl font-bold text-[var(--muted)]">
-                  {dislikedJobs.length}
+              {lastDecision && (
+                <div className="rounded-2xl border border-border/60 bg-surface-elevated/50 p-4 text-sm text-foreground/75">
+                  <div className="mb-1 text-xs font-semibold uppercase tracking-[0.3em] text-muted">Latest move</div>
+                  You {lastDecision.decision === "save" ? "saved" : "skipped"} <strong>{lastDecision.jobTitle}</strong>.
                 </div>
-                <div className="text-sm text-[var(--muted)]">Passed</div>
+              )}
+              <Button variant="ghost" onClick={handleClear} className="w-full border border-border/70 text-sm">
+                <RotateCcw className="h-4 w-4" />
+                Reset deck
+              </Button>
+              <div className="rounded-2xl border border-border/60 bg-background/60 p-4 text-sm text-foreground/70">
+                <div className="mb-2 flex items-center gap-2 font-semibold text-foreground">
+                  <BookmarkCheck className="h-4 w-4 text-primary" />
+                  Saved roles sync across devices
+                </div>
+                <p>Sign in from any device and continue where you left off. We keep your streak alive.</p>
               </div>
-            </div>
-
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={() => alert("Liked jobs page coming soon!")}
-                className="flex-1 rounded-lg bg-[var(--brand)] py-2 text-center text-sm font-medium text-white transition hover:bg-[var(--brand-hover)]"
-              >
-                View Liked Jobs
-              </button>
-              <button
-                onClick={() => {
-                  if (confirm("Are you sure you want to clear all swipe history?")) {
-                    clearAllSwipes();
-                  }
-                }}
-                className="rounded-lg border border-[var(--destructive)] px-4 py-2 text-sm font-medium text-[var(--destructive)] transition hover:bg-[var(--destructive)] hover:text-white"
-              >
-                Clear
-              </button>
-            </div>
-          </div>
-        )}
-
-        <div className="h-[600px] md:h-[700px]">
-          <JobSwiper jobs={mockJobs} onSwipe={handleSwipe} onComplete={handleComplete} />
+            </CardContent>
+          </Card>
         </div>
-
-        <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-center">
-          <p className="text-sm text-[var(--muted)]">
-            💡 <strong>Pro Tip:</strong> Use arrow keys or swipe gestures on mobile to navigate
-            jobs quickly
-          </p>
+        <div className="relative flex-1">
+          <div className="h-[640px] w-full rounded-3xl border border-border bg-background/80 p-4 shadow-soft md:h-[720px]">
+            <SwipeStack
+              jobs={mockJobs}
+              onSwipe={(job, decision) => {
+                setCompleted(false);
+                setLastDecision({ jobTitle: job.title, decision });
+              }}
+              onComplete={() => setCompleted(true)}
+            />
+          </div>
+          {completed && (
+            <div className="mt-4 rounded-2xl border border-border/60 bg-surface-elevated/50 p-4 text-sm text-foreground/80">
+              You&apos;ve reviewed every role for today. We&apos;ll deliver fresh matches soon.
+            </div>
+          )}
         </div>
       </div>
     </div>

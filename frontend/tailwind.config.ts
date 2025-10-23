@@ -27,21 +27,37 @@ const config: Config = {
           DEFAULT: "var(--card)",
           foreground: "var(--card-foreground)",
         },
-        brand: {
-          DEFAULT: "var(--brand)",
-          hover: "var(--brand-hover)",
+        surface: {
+          elevated: "var(--surface-elevated)",
+          tinted: "var(--surface-tinted)",
         },
-        destructive: {
-          DEFAULT: "var(--destructive)",
-          hover: "var(--destructive-hover)",
+        primary: {
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
         },
-        success: "var(--success)",
-        warning: "var(--warning)",
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
+        positive: "var(--positive)",
+        negative: "var(--negative)",
+        progress: {
+          DEFAULT: "var(--primary)",
+          track: "var(--progress-track)",
+        },
+      },
+      fontFamily: {
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-sans)", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        soft: "var(--shadow-soft)",
+        ring: "var(--shadow-ring)",
       },
     },
   },
