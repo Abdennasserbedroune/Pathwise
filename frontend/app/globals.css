@@ -1,45 +1,23 @@
+@import "./index.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: light;
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --muted: #64748b;
-  --muted-foreground: #475569;
-  --border: #e2e8f0;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --brand: #10b981;
-  --brand-hover: #059669;
-  --destructive: #ef4444;
-  --destructive-hover: #dc2626;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --radius: 0.5rem;
+* {
+  box-sizing: border-box;
 }
 
-.dark {
-  color-scheme: dark;
-  --background: #0a0a0a;
-  --foreground: #f8fafc;
-  --muted: #71717a;
-  --muted-foreground: #a1a1aa;
-  --border: #27272a;
-  --card: #18181b;
-  --card-foreground: #f8fafc;
-  --brand: #10b981;
-  --brand-hover: #059669;
-  --destructive: #ef4444;
-  --destructive-hover: #dc2626;
-  --success: #10b981;
-  --warning: #f59e0b;
+html,
+body {
+  min-height: 100%;
 }
 
-html, body {
+body {
   background-color: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
+  line-height: 1.6;
 }
 
 a {
@@ -47,17 +25,48 @@ a {
   text-decoration: none;
 }
 
-* {
-  box-sizing: border-box;
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
-/* motion: subtle fade-up used on hero and cards; respects reduced motion */
+::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .animate-in-up { animation: fade-in-up 500ms ease-out both; }
-  .animate-in-up-slow { animation: fade-in-up 700ms ease-out 100ms both; }
+  .animate-in-up {
+    animation: fade-in-up 480ms ease-out both;
+  }
+  .animate-in-up-delay {
+    animation: fade-in-up 640ms ease-out 120ms both;
+  }
+}
+
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

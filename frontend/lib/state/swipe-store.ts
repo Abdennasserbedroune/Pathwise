@@ -1,87 +1,80 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type SwipeDecision = "like" | "dislike" | "superlike";
+export type SwipeDecision = "save" | "skip";
 
 export interface SwipeRecord {
-  jobId: string;
-  decision: SwipeDecision;
-  timestamp: number;
+  readonly jobId: string;
+  readonly decision: SwipeDecision;
+  readonly timestamp: number;
 }
 
 interface SwipeState {
-  swipes: SwipeRecord[];
-  likedJobs: string[];
-  dislikedJobs: string[];
-  superlikedJobs: string[];
-  addSwipe: (jobId: string, decision: SwipeDecision) => void;
-  removeSwipe: (jobId: string) => void;
-  clearAllSwipes: () => void;
-  hasSwipedOn: (jobId: string) => boolean;
-  getSwipeDecision: (jobId: string) => SwipeDecision | null;
+  readonly history: SwipeRecord[];
+  readonly savedJobs: string[];
+  readonly skippedJobs: string[];
+  readonly markDecision: (jobId: string, decision: SwipeDecision) => void;
+  readonly undoDecision: (jobId: string) => void;
+  readonly clearAll: () => void;
+  readonly hasDecided: (jobId: string) => boolean;
+  readonly getDecision: (jobId: string) => SwipeDecision | null;
 }
 
 export const useSwipeStore = create<SwipeState>()(
   persist(
     (set, get) => ({
-      swipes: [],
-      likedJobs: [],
-      dislikedJobs: [],
-      superlikedJobs: [],
+      history: [],
+      savedJobs: [],
+      skippedJobs: [],
 
-      addSwipe: (jobId: string, decision: SwipeDecision) => {
-        const existingSwipe = get().swipes.find((s) => s.jobId === jobId);
-        if (existingSwipe) {
+      markDecision: (jobId: string, decision: SwipeDecision) => {
+        if (get().hasDecided(jobId)) {
           return;
         }
 
-        const newSwipe: SwipeRecord = {
+        const record: SwipeRecord = {
           jobId,
           decision,
           timestamp: Date.now(),
         };
 
         set((state) => {
-          const newSwipes = [...state.swipes, newSwipe];
-          const updates: Partial<SwipeState> = { swipes: newSwipes };
-
-          if (decision === "like") {
-            updates.likedJobs = [...state.likedJobs, jobId];
-          } else if (decision === "dislike") {
-            updates.dislikedJobs = [...state.dislikedJobs, jobId];
-          } else if (decision === "superlike") {
-            updates.superlikedJobs = [...state.superlikedJobs, jobId];
+          const nextHistory = [...state.history, record];
+          if (decision === "save") {
+            return {
+              history: nextHistory,
+              savedJobs: [...state.savedJobs, jobId],
+              skippedJobs: state.skippedJobs,
+            };
           }
 
-          return updates as SwipeState;
+          return {
+            history: nextHistory,
+            savedJobs: state.savedJobs,
+            skippedJobs: [...state.skippedJobs, jobId],
+          };
         });
       },
 
-      removeSwipe: (jobId: string) => {
+      undoDecision: (jobId: string) => {
         set((state) => ({
-          swipes: state.swipes.filter((s) => s.jobId !== jobId),
-          likedJobs: state.likedJobs.filter((id) => id !== jobId),
-          dislikedJobs: state.dislikedJobs.filter((id) => id !== jobId),
-          superlikedJobs: state.superlikedJobs.filter((id) => id !== jobId),
+          history: state.history.filter((entry) => entry.jobId !== jobId),
+          savedJobs: state.savedJobs.filter((id) => id !== jobId),
+          skippedJobs: state.skippedJobs.filter((id) => id !== jobId),
         }));
       },
 
-      clearAllSwipes: () => {
-        set({
-          swipes: [],
-          likedJobs: [],
-          dislikedJobs: [],
-          superlikedJobs: [],
-        });
+      clearAll: () => {
+        set({ history: [], savedJobs: [], skippedJobs: [] });
       },
 
-      hasSwipedOn: (jobId: string) => {
-        return get().swipes.some((s) => s.jobId === jobId);
+      hasDecided: (jobId: string) => {
+        return get().history.some((entry) => entry.jobId === jobId);
       },
 
-      getSwipeDecision: (jobId: string) => {
-        const swipe = get().swipes.find((s) => s.jobId === jobId);
-        return swipe ? swipe.decision : null;
+      getDecision: (jobId: string) => {
+        const entry = get().history.find((item) => item.jobId === jobId);
+        return entry ? entry.decision : null;
       },
     }),
     {
