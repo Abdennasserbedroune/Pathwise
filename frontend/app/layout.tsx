@@ -13,8 +13,14 @@ import authOptions from "@/lib/auth/options";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Pathwise",
-  description: "AI-powered resume intelligence platform",
+  title: "AutoJobFlow - Swipe Your Way to Your Dream Job",
+  description: "Discover your perfect job match with our intuitive swipe-based job browser. Swipe right on opportunities you love, left on those you don't.",
+  keywords: ["job search", "job board", "career", "swipe jobs", "job matching"],
+  openGraph: {
+    title: "AutoJobFlow - Swipe Your Way to Your Dream Job",
+    description: "Discover your perfect job match with our intuitive swipe-based job browser.",
+    type: "website",
+  },
 };
 
 interface RootLayoutProps {
@@ -39,16 +45,18 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             <header className="border-b border-[var(--border)] bg-[var(--background)]">
               <div className="container mx-auto flex flex-wrap items-center justify-between gap-4 px-6 py-4">
                 <div className="flex flex-wrap items-center gap-6">
-                  <span className="text-lg font-semibold tracking-tight">Pathwise</span>
-                  <nav className="flex items-center gap-6 text-sm text-[var(--muted)]">
-                    <a className="transition hover:text-[var(--brand)]" href="#features">
-                      Features
+                  <a href="/" className="text-lg font-bold tracking-tight text-[var(--brand)]">
+                    AutoJobFlow
+                  </a>
+                  <nav className="hidden md:flex items-center gap-6 text-sm text-[var(--muted)]">
+                    <a className="transition hover:text-[var(--brand)]" href="/landing">
+                      Home
                     </a>
-                    <a className="transition hover:text-[var(--brand)]" href="#workflow">
-                      Workflow
+                    <a className="transition hover:text-[var(--brand)]" href="/jobs">
+                      Browse Jobs
                     </a>
-                    <a className="transition hover:text-[var(--brand)]" href="#stack">
-                      Stack
+                    <a className="transition hover:text-[var(--brand)]" href="#about">
+                      About
                     </a>
                   </nav>
                 </div>
@@ -63,7 +71,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
             <footer className="border-t border-[var(--border)] bg-[var(--background)] py-6">
               <div className="container mx-auto px-6 text-sm text-[var(--muted)]">
-                © {new Date().getFullYear()} Pathwise. All rights reserved.
+                © {new Date().getFullYear()} AutoJobFlow. All rights reserved.
               </div>
             </footer>
           </div>
