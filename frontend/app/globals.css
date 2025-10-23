@@ -2,29 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* <CHANGE> theme tokens for light and dark modes, plus small motion utilities */
 :root {
   color-scheme: light;
-  /* neutrals */
   --background: #ffffff;
-  --foreground: #0f172a; /* slate-900 */
-  --muted: #475569; /* slate-600 */
-  --muted-2: #64748b; /* slate-500 */
-  --border: #e5e7eb; /* zinc-200 */
-  /* brand */
-  --brand: #06b6d4; /* cyan-500 */
-  --brand-contrast: #06242a; /* dark text on brand in light mode */
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --muted-foreground: #475569;
+  --border: #e2e8f0;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --brand: #10b981;
+  --brand-hover: #059669;
+  --destructive: #ef4444;
+  --destructive-hover: #dc2626;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --radius: 0.5rem;
 }
 
 .dark {
   color-scheme: dark;
-  --background: #0b1220; /* near slate-950 */
-  --foreground: #e2e8f0; /* slate-200 */
-  --muted: #94a3b8; /* slate-400 */
-  --muted-2: #a3b0c1; /* slightly lighter */
-  --border: #1f2937; /* slate-800/900 */
-  --brand: #06b6d4; /* keep brand consistent */
-  --brand-contrast: #051317; /* near-black for contrast where needed */
+  --background: #0a0a0a;
+  --foreground: #f8fafc;
+  --muted: #71717a;
+  --muted-foreground: #a1a1aa;
+  --border: #27272a;
+  --card: #18181b;
+  --card-foreground: #f8fafc;
+  --brand: #10b981;
+  --brand-hover: #059669;
+  --destructive: #ef4444;
+  --destructive-hover: #dc2626;
+  --success: #10b981;
+  --warning: #f59e0b;
 }
 
 html, body {

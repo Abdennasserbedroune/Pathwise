@@ -1,6 +1,6 @@
 {
-  "name": "pathwise-frontend",
-  "version": "0.1.0",
+  "name": "autojobflow-frontend",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,13 +14,15 @@
   "dependencies": {
     "@auth/prisma-adapter": "^1.4.0",
     "@prisma/client": "^5.16.2",
+    "mammoth": "^1.6.0",
     "next": "14.2.6",
     "next-auth": "^4.24.7",
     "nodemailer": "^6.9.13",
+    "pdf-parse": "^1.1.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "mammoth": "^1.6.0",
-    "pdf-parse": "^1.1.1"
+    "swiper": "^12.0.3",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@types/node": "20.14.10",
